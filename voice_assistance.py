@@ -1,4 +1,5 @@
 import speech_recognition as sr
+import Jarvis
 
 json_string = '''
 {
@@ -16,6 +17,7 @@ json_string = '''
 '''
 r = sr.Recognizer()
 m = sr.Microphone()
+jarvis = Jarvis.jarvis()
 
 try:
     print("A moment of silence, please...")
@@ -23,19 +25,28 @@ try:
         r.adjust_for_ambient_noise(source)
 
     print("Set minimum energy threshold to {}".format(r.energy_threshold))
+    jarvis.greetings()
     while True:
         print("Say something!")
         with m as source: audio = r.listen(source)
         print("Got it! Now to recognize it...")
         try:
             # recognize speech using Google Speech Recognition
-            value = r.recognize_google(audio)
+            user_value = r.recognize_google(audio)
+            user_value = user_value.lower()
             
+
+
+
+
             # we need some special handling here to correctly print unicode characters to standard output
             if str is bytes:  # this version of Python uses bytes for strings (Python 2)
-                print(u"You said {}".format(value).encode("utf-8"))
+                print(u"You said {}".format(user_value).encode("utf-8"))
             else:  # this version of Python uses unicode for strings (Python 3+)
-                print("You said {}".format(value))
+                print("You said {}".format(user_value))
+                print('Jarvis is spearking!')
+                jarvis.reply(user_value)
+
         except sr.UnknownValueError:
             print("Oops! Didn't catch that")
         except sr.RequestError as e:
